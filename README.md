@@ -13,3 +13,8 @@ progress
 - Starting hand
 - Turn mechanics
 - Reshuffle
+
+next 
+----
+- Implement card `play` functionality for Treasure Cards
+- Implement card `buy` functionality after you're done with `play` for treasure cards.
