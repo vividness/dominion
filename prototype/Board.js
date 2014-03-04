@@ -1,33 +1,60 @@
 var Board = (function () {
-  "use strict";
+  return {
+    player:  null,
+    kingdom: {}, // kingdom cards aka available cards
+    trashed: {}, // cards that are trashed
+    onBoard: {}, // visible cards that are placed on the board
 
-  var board = {
-    player:    null,
-    available: {}, // {'Copper': 10,}
-    trashed:   {},
-    visible:   {},
+    init: function (gameName) {
+			this.reset();
 
-    init: function (cards) {
-      this.player = Player; // use single Player object
+      this.player = Player;
       this.cards  = Cards;
 
-      if (!cards instanceof Array || cards.length !== 10) {
-        throw "Not enough cards passed to the Board initializer";
-      }
+			if (gameName === undefined || gameName === "firstGame") {
+				this.pickFirstGameKingdomCards();
+			}
 
-      //initialize the board collection with the treasure, victory and action cards
-      //todo check the rules for more details
+			this.pickVictoryAndTreasureCards();
+
+			return this;
     },
     reset: function () {
-      this.visible   = [];
-      this.trashed   = [];
-      this.available = [];
+      this.onBoard = {};
+      this.trashed = {};
+      this.kingdom = {};
     },
     clear: function () {
-      this.visible = [];
+      this.onBoard = {};
     },
+		pickVictoryAndTreasureCards: function () {
+			var infinity = 1.0/0;
+
+			this.kingdom["Estate"]   = 8;
+			this.kingdom["Duchy"]    = 8;
+			this.kingdom["Province"] = 8;
+			this.kingdom["Curse"]    = 10;
+
+			this.kingdom["Copper"] = infinity;
+			this.kingdom["Silver"] = infinity;
+			this.kingdom["Gold"]   = infinity;
+
+			return this;
+		},
+		pickFirstGameKingdomCards: function () {
+			var firstGameCards = [
+				"Cellar", "Market", "Militia", "Mine", "Moat", "Remodel",
+				"Smithy", "Village", "Woodcutter", "Workshop"
+			];
+
+			for (var i = 0; i < firstGameCards.length; i++) {
+				this.kingdom[firstGameCards[i]] = 25;
+			}
+
+			return this;
+		},
     buy: function (card) {
-      if (this.buyPossible(card)) {
+      if (this.isBuyingPossible(card)) {
         this.player.takeCoins(Cards[card].cost);
         this.player.takeBuyPoints();
 
@@ -37,10 +64,8 @@ var Board = (function () {
 
       return false;
     },
-    buyPossible: function (card) {
+		isBuyingPossible: function (card) {
       return this.cards[card].cost <= this.player.coins() && this.player.buys() > 0;
     }
   };
-
-  return board;
 }());
