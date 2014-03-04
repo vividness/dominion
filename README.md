@@ -7,14 +7,16 @@ progress
 --------
 - Card objects implemented
 
-> for easier and dynamic acces the cards live inside the `Cards` object 
+> for easier and dynamic access the cards live inside the `Cards` object
 > (prefer accessing by using `Cards["Copper"]` over `Cards.Copper`
 
-- Starting hand
+- Player tarting hand
 - Turn mechanics
 - Reshuffle
+- Init Board with the "First game" preset
+- Play for Treasure cards
 
 next 
 ----
-- Implement card `play` functionality for Treasure Cards
-- Implement card `buy` functionality after you're done with `play` for treasure cards.
+- ~~Implement card `play` functionality for Treasure Cards~~
+- Implement card `buy` functionality.
