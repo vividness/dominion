@@ -1,6 +1,4 @@
 var Player = (function () {
-  "use strict";
-
   var Hand = {
     reset: function () {
       this.actions = 1;
@@ -10,7 +8,7 @@ var Player = (function () {
     }
   };
 
-  var player = {
+  return {
     hand:         null,
     board:        null,
     draw_pile:    [],
@@ -123,8 +121,6 @@ var Player = (function () {
       };
     }
   };
-
-  return player;
 }());
 
 //test
