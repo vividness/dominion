@@ -5,10 +5,10 @@ var Dominion = function () {
 	var GameRules = {};
 
 	// still designing
+	// todo: use camel case
 	var CardRules = {
 		add_coins: function () {},
 		add_victory: function () {},
-		add_actions: function () {},
 		discard_any_cards: function () {},
 		replace_discarded_cards: function () {},
 		trash_up_to: function () {},
@@ -16,7 +16,6 @@ var Dominion = function () {
 		discard_deck: function () {},
 		add_actions: function () {},
 		add_buys: function () {},
-		gain_card_costing_up_to: function () {},
 		bureaucrat: function () {},
 		trash_this_card: function () {},
 		gain_card_costing_up_to: function () {},
@@ -27,12 +26,11 @@ var Dominion = function () {
 		spy: function () {},
 		thief: function () {},
 		chose_card_play_it_twice: function () {},
-		add_buys: function () {},
 		other_players_draw_cards: function () {},
 		library: function () {},
 		mine: function () {},
 		other_players_get_curse_card: function () {},
-		adventurer: function () {},
+		adventurer: function () {}
 	};
 
 	var Cards = (function () {
@@ -406,6 +404,7 @@ var Dominion = function () {
 				this.board = Board; // one of kind object, global like Window in browsers
 
 				this.firstHand();
+				this.board.init();
 
 				return this;
 			},
@@ -509,9 +508,11 @@ var Dominion = function () {
 			}
 		};
 	}());
-};
 
-//test
-//Player.init();
-//Player.endOfTurn().nextHand().endOfTurn().nextHand();
-//Player.debug();
+	//test
+  //Player.init();
+  //Player.endOfTurn().nextHand().endOfTurn().nextHand();
+  //Player.debug();
+
+	return Player;
+};
