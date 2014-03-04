@@ -1,7 +1,5 @@
 var Cards = (function () {
-  "use strict";
-
-  var cards = {
+  return {
     "Copper": {
       name: "Copper",
       type: "Treasure",
@@ -276,6 +274,4 @@ var Cards = (function () {
       }
     }
   };
-
-  return cards;
 }());
