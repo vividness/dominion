@@ -522,7 +522,9 @@ var Dominion = (function () {
     };
 
     var Game = {
+      cards:   Cards,
       state:   null, // wait, play, quit
+
       context: function () {
         return context();
       },
@@ -541,6 +543,7 @@ var Dominion = (function () {
       },
       quit: function () {
       },
+
       debug: Player.debug
     };
 
