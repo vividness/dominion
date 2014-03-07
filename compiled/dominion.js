@@ -510,10 +510,21 @@ var Dominion = (function () {
   }());
 
   var Game = (function () {
-    var Game = {
-      state: null,
-      context: function () {
+    var context = function () {
+      return {
+        kingdom:     Board.kingdom,
+        onBoard:     Board.onBoard,
+        trashPile:   Board.trashed,
+        drawPile:    Player.drawPile,
+        discardPile: Player.discardPile,
+        hand:        Player.hand
+      };
+    };
 
+    var Game = {
+      state:   null, // wait, play, quit
+      context: function () {
+        return context();
       },
       start: function (cardListOrPresetName) {
         Board.init(cardListOrPresetName);
