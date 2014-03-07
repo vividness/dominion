@@ -70,7 +70,7 @@ var Dominion = (function () {
         type: "Action",
         cost: 2,
         play: function () {
-          this.add_actions(1);
+          this.addActions(1);
           this.discard_any_cards();
           this.replace_discarded_cards();
         }
@@ -89,7 +89,8 @@ var Dominion = (function () {
         cost:   2,
         immune: true,
         play:   function () {
-          this.draw_cards(2);
+          this.drawCard();
+          this.drawCard();
         }
       },
       "Chancellor": {
@@ -97,7 +98,7 @@ var Dominion = (function () {
         type: "Action",
         cost: 3,
         play: function () {
-          this.add_coins(2);
+          this.addCoins(2);
           this.discard_deck();
         }
       },
@@ -106,8 +107,8 @@ var Dominion = (function () {
         type: "Action",
         cost: 3,
         play: function () {
-          this.draw_cards(1);
-          this.add_actions(2);
+          this.drawcard();
+          this.addActions(2);
         }
       },
       "Woodcutter": {
@@ -115,8 +116,8 @@ var Dominion = (function () {
         type: "Action",
         cost: 3,
         play: function () {
-          this.add_buys(1);
-          this.add_coins(2);
+          this.addBuys(1);
+          this.addCoins(2);
         }
       },
       "Workshop": {
@@ -157,7 +158,7 @@ var Dominion = (function () {
         type: "Action - Attack",
         cost: 4,
         play: function () {
-          this.add_coins(2);
+          this.addCoins(2);
           this.other_players_discard_down_to(3);
         }
       },
@@ -182,7 +183,9 @@ var Dominion = (function () {
         type: "Action",
         cost: 4,
         play: function () {
-          this.draw_cards(3);
+          this.drawCard();
+          this.drawCard();
+          this.drawCard();
         }
       },
       "Spy": {
@@ -214,9 +217,12 @@ var Dominion = (function () {
         type: "Action",
         cost: 5,
         play: function () {
-          this.draw_cards(4);
-          this.buy_points(1);
-          this.other_players_draw_cards(1);
+          this.drawCards();
+          this.drawCards();
+          this.drawCards();
+          this.drawCards();
+          this.addBuys(1);
+          // this.other_players_draw_cards(1);
         }
       },
       "Festival": {
@@ -224,9 +230,9 @@ var Dominion = (function () {
         type: "Action",
         cost: 5,
         play: function () {
-          this.add_actions(2);
-          this.add_buys(1);
-          this.add_coins(2);
+          this.addActions(2);
+          this.addBuys(1);
+          this.addCoins(2);
         }
       },
       "Laboratory": {
@@ -234,8 +240,9 @@ var Dominion = (function () {
         type: "Action",
         cost: 5,
         play: function () {
-          this.draw_cards(2);
-          this.add_actions(1);
+          this.drawCard();
+          this.drawCard();
+          this.addActions(1);
         }
       },
       "Library": {
@@ -243,7 +250,7 @@ var Dominion = (function () {
         type: "Action",
         cost: 5,
         play: function () {
-          this.library();
+          //this.library();
         }
       },
       "Market": {
@@ -251,10 +258,10 @@ var Dominion = (function () {
         type: "Action",
         cost: 5,
         play: function () {
-          this.draw_cards(1);
-          this.add_actions(1);
-          this.add_buys(1);
-          this.add_coins(1);
+          this.drawCard();
+          this.addActions(1);
+          this.addBuys(1);
+          this.addCoins(1);
         }
       },
       "Mine": {
@@ -262,7 +269,7 @@ var Dominion = (function () {
         type: "Action",
         cost: 5,
         play: function () {
-          this.mine();
+          //this.mine();
         }
       },
       "Witch": {
@@ -270,8 +277,9 @@ var Dominion = (function () {
         type: "Action - Attack",
         cost: 5,
         play: function () {
-          this.draw_cards(2);
-          this.other_players_get_curse_card();
+          this.drawCard();
+          this.drawCard();
+          //this.other_players_get_curse_card();
         }
       },
       "Adventurer": {
@@ -279,7 +287,7 @@ var Dominion = (function () {
         type: "Action",
         cost: 6,
         play: function () {
-          this.adventurer();
+          //this.adventurer();
         }
       }
     };
@@ -342,6 +350,7 @@ var Dominion = (function () {
 
   var Player = (function () {
     var Player = {
+      phase:       null, // can be, action, buy, waiting
       drawPile:    [],
       discardPile: [],
       hand:        [],
@@ -353,7 +362,7 @@ var Dominion = (function () {
        *  Initializers and resetters
        */
       init: function () {
-        this.initialHand();
+        this.dealInitialHand();
 
         return this;
       },
@@ -366,7 +375,7 @@ var Dominion = (function () {
       clearBoard: function () {
         Board.clear();
       },
-      initialHand: function () {
+      dealInitialHand: function () {
         this.drawPile = [
           "Estate", "Estate", "Estate", "Copper", "Copper",
           "Copper", "Copper", "Copper", "Copper", "Copper"
