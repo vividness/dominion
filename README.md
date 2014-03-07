@@ -15,8 +15,9 @@ progress
 - Init board with the "First game" preset
 - Play treasure cards
 - Buy cards
+- Basic Game object with methods to interact with the internals
 
 next 
 ----
-- make Hand, Board and Cards objects private within Dominion module
-- dominion module returns singleton Game object (Game.start(), Game.state(), Game.continue(), Game.exit())
+- ~~make Hand, Board and Cards objects private within Dominion module~~
+- ~~dominion module returns singleton Game object (Game.start(), Game.state(), Game.continue(), Game.exit())~~
