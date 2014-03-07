@@ -14,9 +14,9 @@ progress
 - Turn mechanics (draw card, reshuffle the discard pile)
 - Init board with the "First game" preset
 - Play treasure cards
+- Buy cards
 
 next 
 ----
-- ~~Implement card `play` functionality for Treasure Cards~~
-- !!Player.playCard("Copper") works, Card["Copper"].play applied against the Player object~~
-- Implement card `buy` functionality.
+- make Hand, Board and Cards objects private within Dominion module
+- dominion module returns singleton Game object (Game.start(), Game.state(), Game.continue(), Game.exit())
