@@ -5,7 +5,7 @@ var Dominion = (function () {
     /**
      * IMPORTANT
      *
-     * `play` and `end` will be called with
+     * `play will be called with
      * `apply` against the Player object
      */
     var Cards =  {
@@ -62,8 +62,7 @@ var Dominion = (function () {
         cost: 2,
         play: function () {
           this.addActions(1);
-          this.discard_any_cards();
-          this.replace_discarded_cards();
+          this.discardAnyCardsAndReplace();
         }
       },
       "Chapel":  {
@@ -338,13 +337,16 @@ var Dominion = (function () {
 
   var Player = (function () {
     var Player = {
-      phase:       null, // can be, action, buy, waiting
+      phase:       null, // can be action phase, buy phase
+      state:       null, // can be playing, waiting, interacting
       drawPile:    [],
       discardPile: [],
       hand:        [],
       actions:     1,
       buys:        1,
       coins:       0,
+
+      lastInteraction: null,
 
       /**
        *  Initializers and resetters
@@ -426,6 +428,9 @@ var Dominion = (function () {
       moveCardFromHandToBoard: function (cardIndex) {
         Board.onBoard.push(this.hand.splice(cardIndex, 1).pop());
       },
+      moveCardFromHandToDiscardPile: function (cardIndex) {
+        this.discardPile.push(this.hand.splice(cardIndex, 1).pop());
+      },
       drawCard: function () {
         if (this.isDrawPileEmpty()) {
           this.moveDiscardPileToDrawPile();
@@ -436,7 +441,17 @@ var Dominion = (function () {
           this.hand.push(card);
         }
       },
+      discardCard: function (card) {
+        var cardIndex = this.hand.indexOf(card);
+
+        if (cardIndex !== -1) {
+          this.moveCardFromHandToDiscardPile(cardIndex);
+        } else {
+          throw card + " card cannot be discarded as it's not part of your hand";
+        }
+      },
       playCard: function (card) {
+        // could be extracted to Player.holdsCard(card)
         var cardIndex = this.hand.indexOf(card);
 
         if (cardIndex !== -1) {
@@ -480,6 +495,27 @@ var Dominion = (function () {
       addBuys: function (n) {
         this.buys += n;
       },
+      discardAnyCardsAndReplace: function () {
+        var player = this;
+
+        var lastInteraction = function (cards) {
+          if (!(cards instanceof Array)) {
+            throw "Invalid list of cards";
+          }
+
+          for (var i = 0; i < cards.length; i++) {
+            player.discardCard(cards[i]);
+            player.drawCard();
+          }
+
+          this.state = 'playing';
+        };
+
+        this.state = 'interacting';
+        this.lastInteraction = lastInteraction;
+
+        return this.lastInteraction;
+      },
 
       /**
        * End game interactions
@@ -517,9 +553,6 @@ var Dominion = (function () {
     };
 
     var Game = {
-      cards:   Cards,
-      state:   null, // wait, play, quit
-
       context: function () {
         return context();
       },
@@ -527,8 +560,13 @@ var Dominion = (function () {
         Board.init(cardListOrPresetName);
         Player.init();
       },
+      // returns interaction if cards specifies such a rule
       play: function (card) {
-        Player.playCard(card);
+        if (Player.state === 'interacting') {
+          return Player.lastInteraction;
+        }
+
+        return Player.playCard(card);
       },
       buy: function (card) {
         Player.buyCard(card);
