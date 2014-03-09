@@ -38,32 +38,23 @@ var Dominion = (function () {
         type: "Victory",
         cost: 2,
         end:  function () {
-          this.add_victory(1);
+          this.addVictory(1);
         }
       },
       "Duchy": {
         name: "Duchy",
         type: "Victory",
-        cost: 5,
-        end:  function () {
-          this.add_victory(3);
-        }
+        cost: 5
       },
       "Province": {
         name: "Province",
         type: "Victory",
-        cost: 8,
-        end:  function () {
-          this.add_victory(6);
-        }
+        cost: 8
       },
       "Curse": {
         name: "Curse",
         type: "Curse",
-        cost: 0,
-        end:  function () {
-          this.add_victory(-1);
-        }
+        cost: 0
       },
       "Cellar": {
         name: "Cellar",
@@ -148,10 +139,7 @@ var Dominion = (function () {
       "Gardens": {
         name: "Gardens",
         type: "Victory",
-        cost: 4,
-        end:  function () {
-          this.gardens();
-        }
+        cost: 4
       },
       "Militia": {
         name: "Militia",
@@ -491,6 +479,13 @@ var Dominion = (function () {
       },
       addBuys: function (n) {
         this.buys += n;
+      },
+
+      /**
+       * End game interactions
+       */
+      countVictoryPoints: function () {
+
       },
 
       /* Debug helpers */
