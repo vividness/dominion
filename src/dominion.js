@@ -36,10 +36,7 @@ var Dominion = (function () {
       "Estate": {
         name: "Estate",
         type: "Victory",
-        cost: 2,
-        end:  function () {
-          this.addVictory(1);
-        }
+        cost: 2
       },
       "Duchy": {
         name: "Duchy",
@@ -338,15 +335,12 @@ var Dominion = (function () {
   var Player = (function () {
     var Player = {
       phase:       null, // can be action phase, buy phase
-      state:       null, // can be playing, waiting, interacting
       drawPile:    [],
       discardPile: [],
       hand:        [],
       actions:     1,
       buys:        1,
       coins:       0,
-
-      lastInteraction: null,
 
       /**
        *  Initializers and resetters
@@ -497,8 +491,7 @@ var Dominion = (function () {
       },
       discardAnyCardsAndReplace: function () {
         var player = this;
-
-        var lastInteraction = function (cards) {
+        return function (cards) {
           if (!(cards instanceof Array)) {
             throw "Invalid list of cards";
           }
@@ -507,22 +500,13 @@ var Dominion = (function () {
             player.discardCard(cards[i]);
             player.drawCard();
           }
-
-          this.state = 'playing';
         };
-
-        this.state = 'interacting';
-        this.lastInteraction = lastInteraction;
-
-        return this.lastInteraction;
       },
 
       /**
        * End game interactions
        */
-      countVictoryPoints: function () {
-
-      },
+      countVictoryPoints: function () {},
 
       /* Debug helpers */
       debug: function () {
@@ -541,6 +525,8 @@ var Dominion = (function () {
   }());
 
   var Game = (function () {
+    var lastInteraction = null;
+
     var context = function () {
       return {
         kingdom:     Board.kingdom,
@@ -562,11 +548,11 @@ var Dominion = (function () {
       },
       // returns interaction if cards specifies such a rule
       play: function (card) {
-        if (Player.state === 'interacting') {
-          return Player.lastInteraction;
+        if (!lastInteraction) {
+          lastInteraction = Player.playCard(card);
         }
 
-        return Player.playCard(card);
+        return lastInteraction;
       },
       buy: function (card) {
         Player.buyCard(card);
