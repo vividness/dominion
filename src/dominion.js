@@ -525,7 +525,6 @@ var Dominion = (function () {
   }());
 
   var Game = (function () {
-    var lastInteraction = null;
 
     var context = function () {
       return {
@@ -534,7 +533,8 @@ var Dominion = (function () {
         trashPile:   Board.trashed,
         drawPile:    Player.drawPile,
         discardPile: Player.discardPile,
-        hand:        Player.hand
+        hand:        Player.hand,
+        game:        Game
       };
     };
 
@@ -548,11 +548,7 @@ var Dominion = (function () {
       },
       // returns interaction if cards specifies such a rule
       play: function (card) {
-        if (!lastInteraction) {
-          lastInteraction = Player.playCard(card);
-        }
-
-        return lastInteraction;
+        Player.playCard(card);
       },
       buy: function (card) {
         Player.buyCard(card);
@@ -571,3 +567,11 @@ var Dominion = (function () {
 
   return Game;
 }());
+
+Dominion.start();
+Dominion.play('Copper');
+Dominion.play('Copper');
+Dominion.buy('Cellar');
+Dominion.endOfTurn();
+Dominion.endOfTurn();
+Dominion.context();
