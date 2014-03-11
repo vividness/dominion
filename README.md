@@ -16,8 +16,10 @@ progress
 - Play treasure cards
 - Buy cards
 - Basic Game object with methods to interact with the internals
+- Cellar card rule implemented; Call back based interaction introduced.
 
 next 
 ----
-- ~~make Hand, Board and Cards objects private within Dominion module~~
-- ~~dominion module returns singleton Game object (Game.start(), Game.state(), Game.continue(), Game.exit())~~
+- Methods for removing points (action, buy)
+- More card rules
+- Encapsulation of private members in the Game object
