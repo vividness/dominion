@@ -489,11 +489,15 @@ var Dominion = (function () {
       addBuys: function (n) {
         this.buys += n;
       },
+
+      /**
+       * Cellar card rule
+       * @returns {Function}
+       */
       discardAnyCardsAndReplace: function () {
-        var player = this;
         return function (cards) {
-          if (!Dominion.pending) {
-            throw "Invalid rule call"
+          if (!Game.getPendingAction()) {
+            throw "Invalid pending action";
           }
 
           if (!(cards instanceof Array)) {
@@ -501,12 +505,11 @@ var Dominion = (function () {
           }
 
           for (var i = 0; i < cards.length; i++) {
-            player.discardCard(cards[i]);
-            player.drawCard();
+            Player.discardCard(cards[i]);
+            Player.drawCard();
           }
 
-          // todo: find a better way to clear pending action
-          Dominion.pending = null;
+          Game.removePendingAction();
         };
       },
 
@@ -532,6 +535,10 @@ var Dominion = (function () {
   }());
 
   var Game = (function () {
+    /**
+     * Context for the views
+     * @returns {{kingdom: *, onBoard: *, trashPile: *, drawPile: *, discardPile: *, hand: *, game: {context: context, start: start, play: play, pending: pending, buy: buy, endOfTurn: endOfTurn, clearPendingAction: clearPendingAction, quit: quit, debug: debug}}}
+     */
     var context = function () {
       return {
         kingdom:     Board.kingdom,
@@ -544,8 +551,13 @@ var Dominion = (function () {
       };
     };
 
+    /**
+     * Pending action callback
+     * @type {null}
+     */
+    var pendingAction = null;
+
     var Game = {
-      pending: null,
       context: function () {
         return context();
       },
@@ -553,22 +565,24 @@ var Dominion = (function () {
         Board.init(cardListOrPresetName);
         Player.init();
       },
-      // returns interaction if cards specifies such a rule
       play: function (card) {
-        if (this.pending) {
-          throw "Pending action detected. Call move() in order to get the callback to continue"
+        if (pendingAction instanceof Function) {
+          throw "Pending action detected. Call getPendingAction() in order to get the callback to continue"
         }
 
-        return this.pending = Player.playCard(card);
-      },
-      reply: function () {
-        return this.pending;
+        return pendingAction = Player.playCard(card) || null;
       },
       buy: function (card) {
         Player.buyCard(card);
       },
       endOfTurn: function () {
         Player.endOfTurn();
+      },
+      getPendingAction: function () {
+        return pendingAction;
+      },
+      removePendingAction: function () {
+        pendingAction = null;
       },
       quit: function () {
       },
