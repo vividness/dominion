@@ -59,7 +59,7 @@ var Dominion = (function () {
         cost: 2,
         play: function () {
           this.addActions(1);
-          this.discardAnyCardsAndReplace();
+          return this.discardAnyCardsAndReplace();
         }
       },
       "Chapel":  {
@@ -451,7 +451,7 @@ var Dominion = (function () {
         if (cardIndex !== -1) {
           this.moveCardFromHandToBoard(cardIndex);
           if (Cards[card].play) {
-            Cards[card].play.apply(this);
+            return Cards[card].play.apply(this);
           }
         } else {
           throw card + " card cannot be played as it's not part of your hand";
@@ -492,6 +492,10 @@ var Dominion = (function () {
       discardAnyCardsAndReplace: function () {
         var player = this;
         return function (cards) {
+          if (!Dominion.pending) {
+            throw "Invalid rule call"
+          }
+
           if (!(cards instanceof Array)) {
             throw "Invalid list of cards";
           }
@@ -500,6 +504,9 @@ var Dominion = (function () {
             player.discardCard(cards[i]);
             player.drawCard();
           }
+
+          // todo: find a better way to clear pending action
+          Dominion.pending = null;
         };
       },
 
@@ -525,7 +532,6 @@ var Dominion = (function () {
   }());
 
   var Game = (function () {
-
     var context = function () {
       return {
         kingdom:     Board.kingdom,
@@ -539,6 +545,7 @@ var Dominion = (function () {
     };
 
     var Game = {
+      pending: null,
       context: function () {
         return context();
       },
@@ -548,7 +555,14 @@ var Dominion = (function () {
       },
       // returns interaction if cards specifies such a rule
       play: function (card) {
-        Player.playCard(card);
+        if (this.pending) {
+          throw "Pending action detected. Call move() in order to get the callback to continue"
+        }
+
+        return this.pending = Player.playCard(card);
+      },
+      reply: function () {
+        return this.pending;
       },
       buy: function (card) {
         Player.buyCard(card);
@@ -575,3 +589,4 @@ Dominion.buy('Cellar');
 Dominion.endOfTurn();
 Dominion.endOfTurn();
 Dominion.context();
+Dominion.play('Cellar');
