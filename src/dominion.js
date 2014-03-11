@@ -451,6 +451,7 @@ var Dominion = (function () {
         if (cardIndex !== -1) {
           this.moveCardFromHandToBoard(cardIndex);
           if (Cards[card].play) {
+            this.actions -= 1; //todo: method
             return Cards[card].play.apply(this);
           }
         } else {
@@ -470,9 +471,9 @@ var Dominion = (function () {
           throw "Card out of supply"
         }
 
-        this.buys           -= 1;
-        this.coins          -= Cards[card].cost;
-        Board.kingdom[card] -= 1;
+        this.buys           -= 1; //todo: method
+        this.coins          -= Cards[card].cost; //todo method
+        Board.kingdom[card] -= 1; //todo: method
 
         this.discardPile.push(card);
       },
