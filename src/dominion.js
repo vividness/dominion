@@ -532,18 +532,6 @@ var Dominion = (function () {
        * End game interactions
        */
       countVictoryPoints: function () {},
-
-      /* Debug helpers */
-      debug: function () {
-        return {
-          handCards:    Player.hand, //should be just hand = []
-          drawPile:     Player.drawPile,
-          discardPile:  Player.discardPile,
-          kingdomCards: Board.kingdom,
-          trashedCards: Board.trashed,
-          onBoardCards: Board.onBoard
-        };
-      }
     };
 
     return Player;
