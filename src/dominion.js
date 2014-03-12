@@ -58,8 +58,24 @@ var Dominion = (function () {
         type: "Action",
         cost: 2,
         play: function () {
-          this.addActions(1);
-          return this.discardAnyCardsAndReplace();
+          Player.addActions(1);
+
+          return function (cards) {
+            if (!Game.getPendingAction()) {
+              throw "Invalid pending action";
+            }
+
+            if (!(cards instanceof Array)) {
+              throw "Invalid list of cards";
+            }
+
+            for (var i = 0; i < cards.length; i++) {
+              Player.discardCard(cards[i]);
+              Player.drawCard();
+            }
+
+            Game.removePendingAction();
+          };
         }
       },
       "Chapel":  {
@@ -489,29 +505,6 @@ var Dominion = (function () {
       },
       addBuys: function (n) {
         this.buys += n;
-      },
-
-      /**
-       * Cellar card rule
-       * @returns {Function}
-       */
-      discardAnyCardsAndReplace: function () {
-        return function (cards) {
-          if (!Game.getPendingAction()) {
-            throw "Invalid pending action";
-          }
-
-          if (!(cards instanceof Array)) {
-            throw "Invalid list of cards";
-          }
-
-          for (var i = 0; i < cards.length; i++) {
-            Player.discardCard(cards[i]);
-            Player.drawCard();
-          }
-
-          Game.removePendingAction();
-        };
       },
 
       /**
