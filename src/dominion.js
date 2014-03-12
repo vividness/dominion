@@ -327,7 +327,7 @@ var Dominion = (function () {
         }
 
         if (this.kingdom[card] <= 0) {
-          throw "Card out of supply"
+          throw "Card out of supply";
         }
 
         this.kingdom[card] -= 1;
@@ -491,11 +491,7 @@ var Dominion = (function () {
         }
 
         if (this.coins < Cards[card].cost) {
-          throw "Not enough treasure points"
-        }
-
-        if (Board.kingdom[card] <= 0) {
-          throw "Card out of supply"
+          throw "Not enough treasure points";
         }
 
         Board.takeKingdomCard(card);
@@ -531,7 +527,7 @@ var Dominion = (function () {
       /**
        * End game interactions
        */
-      countVictoryPoints: function () {},
+      countVictoryPoints: function () {}
     };
 
     return Player;
