@@ -321,6 +321,17 @@ var Dominion = (function () {
       clear: function () {
         this.onBoard = [];
       },
+      takeKingdomCard: function (card) {
+        if (!this.kingdom[card]) {
+          throw card + " is not part of the kingdom cards";
+        }
+
+        if (this.kingdom[card] <= 0) {
+          throw "Card out of supply"
+        }
+
+        this.kingdom[card] -= 1;
+      },
       pickVictoryAndTreasureCards: function () {
         var infinity = 1.0/0;
 
@@ -467,7 +478,7 @@ var Dominion = (function () {
         if (cardIndex !== -1) {
           this.moveCardFromHandToBoard(cardIndex);
           if (Cards[card].play) {
-            this.actions -= 1; //todo: method
+            this.takeActions(1);
             return Cards[card].play.apply(this);
           }
         } else {
@@ -487,9 +498,10 @@ var Dominion = (function () {
           throw "Card out of supply"
         }
 
-        this.buys           -= 1; //todo: method
-        this.coins          -= Cards[card].cost; //todo method
-        Board.kingdom[card] -= 1; //todo: method
+        Board.takeKingdomCard(card);
+
+        this.takeBuys(1);
+        this.takeCoins(Cards[card].cost);
 
         this.discardPile.push(card);
       },
@@ -505,6 +517,15 @@ var Dominion = (function () {
       },
       addBuys: function (n) {
         this.buys += n;
+      },
+      takeCoins: function (n) {
+        this.coins -= n;
+      },
+      takeActions: function (n) {
+        this.actions -= n;
+      },
+      takeBuys: function (n) {
+        this.buys -= n;
       },
 
       /**
