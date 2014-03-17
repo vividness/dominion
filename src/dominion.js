@@ -83,7 +83,25 @@ var Dominion = (function () {
         type: "Action",
         cost: 2,
         play: function () {
-          this.trash_up_to(4);
+          return function (cards) {
+            if (!Game.getPendingAction()) {
+              throw "Invalid pending action";
+            }
+
+            if (!(cards instanceof Array)) {
+              throw "Invalid list of cards";
+            }
+
+            if (cards.length > 4) {
+              throw "Invalid number of cards to trash";
+            }
+
+            for (var i = 0; i < cards.length; i++) {
+              Player.trashCard(cards[i]);
+            }
+
+            Game.removePendingAction();
+          };
         }
       },
       "Moat": {
@@ -469,6 +487,15 @@ var Dominion = (function () {
           this.moveCardFromHandToDiscardPile(cardIndex);
         } else {
           throw card + " card cannot be discarded as it's not part of your hand";
+        }
+      },
+      trashCard: function (card) {
+        var cardIndex = this.hand.indexOf(card);
+
+        if (cardIndex !== -1) {
+          Board.trashed.push(this.hand.splice(cardIndex, 1).pop());
+        } else {
+          throw card + " card cannot be trashed as it's not part of your hand";
         }
       },
       playCard: function (card) {
