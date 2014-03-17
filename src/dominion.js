@@ -351,7 +351,7 @@ var Dominion = (function () {
         ];
 
         for (var i = 0; i < firstGameCards.length; i++) {
-          this.kingdom[firstGameCards[i]] = 25;
+          this.kingdom[firstGameCards[i]] = 10;
         }
       }
     };
@@ -566,7 +566,7 @@ var Dominion = (function () {
       },
       play: function (card) {
         if (pendingAction instanceof Function) {
-          throw "Pending action detected. Call getPendingAction() in order to get the callback to continue"
+          throw "Call getPendingAction() to get the callback to continue"
         }
 
         return pendingAction = Player.playCard(card) || null;
