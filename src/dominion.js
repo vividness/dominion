@@ -313,7 +313,6 @@ var Dominion = (function () {
     return Cards;
   }());
 
-  // TODO: Rename board to Table
   var Board = (function () {
     var Board =  {
       kingdom: {}, // kingdom cards aka available cards
