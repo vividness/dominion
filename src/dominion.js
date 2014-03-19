@@ -629,30 +629,22 @@ var Dominion = (function () {
   }());
 
   var Game = (function () {
-    /**
-     * Context for the views
-     */
-    var context = function () {
-      return {
-        kingdom:     Board.kingdom,
-        onBoard:     Board.onBoard,
-        trashPile:   Board.trashed,
-        drawPile:    Player.drawPile,
-        discardPile: Player.discardPile,
-        hand:        Player.hand,
-        game:        Game
-      };
-    };
 
-    /**
-     * Pending action callback
-     * @type {null}
-     */
     var pendingAction = null;
 
     var Game = {
       context: function () {
-        return context();
+        return {
+          kingdom:     Board.kingdom,
+          onBoard:     Board.onBoard,
+          trashPile:   Board.trashed,
+          drawPile:    Player.drawPile,
+          discardPile: Player.discardPile,
+          hand:        Player.hand,
+          actions:     Player.actions,
+          buys:        Player.buys,
+          coins:       Player.coins
+        };
       },
       start: function (cardListOrPresetName) {
         Board.init(cardListOrPresetName);
@@ -672,8 +664,11 @@ var Dominion = (function () {
         do {
           if (Cards[Player.hand[i]].type === 'Treasure') {
             Player.playCard(Player.hand[i]);
+
             i = 0;
             j = Player.hand.length;
+
+            continue;
           }
 
           i++;
@@ -692,9 +687,7 @@ var Dominion = (function () {
         pendingAction = null;
       },
       quit: function () {
-      },
-
-      debug: Player.debug
+      }
     };
 
     return Game;
