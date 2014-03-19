@@ -431,7 +431,7 @@ var Dominion = (function () {
 
   var Player = (function () {
     var Player = {
-      phase:       null, // can be action phase, buy phase, wait
+      phase:       "wait", // can be action phase, buy phase, wait
       drawPile:    [],
       discardPile: [],
       hand:        [],
@@ -528,10 +528,7 @@ var Dominion = (function () {
           this.moveDiscardPileToDrawPile();
         }
 
-        var card = this.drawPile.shift();
-        if (card) {
-          this.hand.push(card);
-        }
+        this.hand.push(this.drawPile.shift());
       },
       discardCard: function (card) {
         var cardIndex = this.hand.indexOf(card);
@@ -589,6 +586,25 @@ var Dominion = (function () {
         Board.takeKingdomCard(card);
         this.hand.push(card);
       },
+      playMoney: function () {
+        var i = 0;
+        var j = this.hand.length;
+
+        do {
+          if (Cards[this.hand[i]].type === 'Treasure') {
+            this.playCard(this.hand[i]);
+
+            i = 0; j = this.hand.length;
+
+            continue;
+          }
+
+          i++;
+        } while (i < j);
+      },
+      switchToWaitPhase: function (phase) {
+        this.phase = "wait";
+      },
       switchToActionPhase: function (phase) {
         this.phase = "action";
       },
@@ -616,12 +632,7 @@ var Dominion = (function () {
       },
       takeBuys: function (n) {
         this.buys -= n;
-      },
-
-      /**
-       * End game interactions
-       */
-      countVictoryPoints: function () {}
+      }
     };
 
     return Player;
@@ -658,22 +669,7 @@ var Dominion = (function () {
         return pendingAction = Player.playCard(card) || null;
       },
       playMoney: function () {
-        //move to Player
-        var i = 0;
-        var j = Player.hand.length;
-
-        do {
-          if (Cards[Player.hand[i]].type === 'Treasure') {
-            Player.playCard(Player.hand[i]);
-
-            i = 0;
-            j = Player.hand.length;
-
-            continue;
-          }
-
-          i++;
-        } while (i < j);
+        Player.playMoney();
       },
       buy: function (card) {
         Player.buyCard(card);
@@ -704,4 +700,9 @@ Dominion.buy('Cellar');
 Dominion.endOfTurn();
 Dominion.endOfTurn();
 Dominion.context();
-Dominion.play('Cellar');
+try {
+  Dominion.play('Cellar');
+} catch (e) {
+  Dominion.endOfTurn();
+  Dominion.play('Cellar');
+}
