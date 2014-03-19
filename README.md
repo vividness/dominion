@@ -17,9 +17,13 @@ progress
 - Buy cards
 - Basic Game object with methods to interact with the internals
 - Cellar card rule implemented; Call back based interaction introduced.
+- Chapel card rule implemented;
+- Chancellor rules
+- Market rules
+
 
 next 
 ----
-- Methods for removing points (action, buy)
-- More card rules
-- Encapsulation of private members in the Game object
+- Implement the rules for the first game set of cards
+		"Cellar", "Market", "Militia", "Mine", "Moat", "Remodel",
+		"Smithy", "Village", "Woodcutter", "Workshop"
