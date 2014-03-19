@@ -120,7 +120,19 @@ var Dominion = (function () {
         cost: 3,
         play: function () {
           this.addCoins(2);
-          this.discard_deck();
+
+          return function (answer) {
+            if (!Game.getPendingAction()) {
+              throw "Invalid pending action";
+            }
+
+            if (answer === 1) {
+              Player.moveDiscardPileToDrawPile();
+              Player.shuffleDrawPile();
+            }
+
+            Game.removePendingAction();
+          };
         }
       },
       "Village": {
@@ -177,7 +189,8 @@ var Dominion = (function () {
         cost: 4,
         play: function () {
           this.addCoins(2);
-          this.other_players_discard_down_to(3);
+          // todo
+          // this.otherPlayersDiscardDownTo(3);
         }
       },
       "Moneylender": {
@@ -287,7 +300,26 @@ var Dominion = (function () {
         type: "Action",
         cost: 5,
         play: function () {
-          //this.mine();
+          return function (oldCard, newCard) {
+            if (!Game.getPendingAction()) {
+              throw "Invalid pending action";
+            }
+
+            if (Cards[oldCard].type !== "Treasure") {
+              throw oldCard + " is not a treasure card";
+            }
+
+            if (Cards[newCard].type !== "Treasure") {
+              throw newCard + " is not a treasure card";
+            }
+
+            if (Cards[newCard].cost > Cards[oldCard].cost + 3) {
+              throw newCard + ", cannot gain the card";
+            }
+
+            Player.trashCard(oldCard);
+            Player.gainCard(newCard);
+          };
         }
       },
       "Witch": {
@@ -478,6 +510,8 @@ var Dominion = (function () {
         if (card) {
           this.hand.push(card);
         }
+
+        return Cards[card];
       },
       discardCard: function (card) {
         var cardIndex = this.hand.indexOf(card);
@@ -487,6 +521,8 @@ var Dominion = (function () {
         } else {
           throw card + " card cannot be discarded as it's not part of your hand";
         }
+
+        return Cards[card];
       },
       trashCard: function (card) {
         var cardIndex = this.hand.indexOf(card);
@@ -496,6 +532,8 @@ var Dominion = (function () {
         } else {
           throw card + " card cannot be trashed as it's not part of your hand";
         }
+
+        return Cards[card];
       },
       playCard: function (card) {
         // could be extracted to Player.holdsCard(card)
@@ -510,6 +548,8 @@ var Dominion = (function () {
         } else {
           throw card + " card cannot be played as it's not part of your hand";
         }
+
+        return Cards[card];
       },
       buyCard: function (card) {
         if (this.buys < 1) {
@@ -526,6 +566,14 @@ var Dominion = (function () {
         this.takeCoins(Cards[card].cost);
 
         this.discardPile.push(card);
+
+        return Cards[card];
+      },
+      gainCard: function (card) {
+        Board.takeKingdomCard(card);
+        this.hand.push(card);
+
+        return Cards[card];
       },
 
       /**
@@ -562,7 +610,6 @@ var Dominion = (function () {
   var Game = (function () {
     /**
      * Context for the views
-     * @returns {{kingdom: *, onBoard: *, trashPile: *, drawPile: *, discardPile: *, hand: *, game: {context: context, start: start, play: play, pending: pending, buy: buy, endOfTurn: endOfTurn, clearPendingAction: clearPendingAction, quit: quit, debug: debug}}}
      */
     var context = function () {
       return {
