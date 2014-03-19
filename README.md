@@ -32,5 +32,5 @@ progress
 next 
 ----
 - Implement the rules for the first game set of cards
-		"Cellar", "Market", "Militia", "Mine", "Moat", "Remodel",
-		"Smithy", "Village", "Woodcutter", "Workshop"
+- Action object {name: CardName, callback: function (), params: Array[]}
+- Player phases
