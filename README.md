@@ -20,6 +20,13 @@ progress
 - Chapel card rule implemented;
 - Chancellor rules
 - Market rules
+- Militia
+- Mine
+- Moat
+- Remodel
+- Smithy
+- Village
+- Woodcutter
 
 
 next 
