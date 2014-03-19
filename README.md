@@ -34,3 +34,4 @@ next
 - Implement the rules for the first game set of cards
 - Action object {name: CardName, callback: function (), params: Array[]}
 - Player phases
+- Event log queue (for the views)
