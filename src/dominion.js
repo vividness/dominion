@@ -665,6 +665,20 @@ var Dominion = (function () {
 
         return pendingAction = Player.playCard(card) || null;
       },
+      playMoney: function () {
+        var i = 0;
+        var j = Player.hand.length;
+
+        do {
+          if (Cards[Player.hand[i]].type === 'Treasure') {
+            Player.playCard(Player.hand[i]);
+            i = 0;
+            j = Player.hand.length;
+          }
+
+          i++;
+        } while (i < j);
+      },
       buy: function (card) {
         Player.buyCard(card);
       },
