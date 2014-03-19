@@ -431,7 +431,7 @@ var Dominion = (function () {
 
   var Player = (function () {
     var Player = {
-      phase:       null, // can be action phase, buy phase
+      phase:       null, // can be action phase, buy phase, wait
       drawPile:    [],
       discardPile: [],
       hand:        [],
@@ -478,6 +478,7 @@ var Dominion = (function () {
       endOfTurn: function () {
         this.moveCardsToDiscardPile();
         this.drawNextHand();
+        this.switchToActionPhase();
       },
       shuffleDrawPile: function () {
         var counter = this.drawPile.length,
@@ -531,8 +532,6 @@ var Dominion = (function () {
         if (card) {
           this.hand.push(card);
         }
-
-        return Cards[card];
       },
       discardCard: function (card) {
         var cardIndex = this.hand.indexOf(card);
@@ -542,8 +541,6 @@ var Dominion = (function () {
         } else {
           throw card + " card cannot be discarded as it's not part of your hand";
         }
-
-        return Cards[card];
       },
       trashCard: function (card) {
         var cardIndex = this.hand.indexOf(card);
@@ -553,8 +550,6 @@ var Dominion = (function () {
         } else {
           throw card + " card cannot be trashed as it's not part of your hand";
         }
-
-        return Cards[card];
       },
       playCard: function (card) {
         // could be extracted to Player.holdsCard(card)
@@ -562,15 +557,17 @@ var Dominion = (function () {
 
         if (cardIndex !== -1) {
           this.moveCardFromHandToBoard(cardIndex);
+
           if (Cards[card].play) {
-            this.takeActions(1);
+            if (Cards[card].type !== "Treasure") {
+              this.takeActions(1);
+            }
+
             return Cards[card].play.apply(this);
           }
         } else {
           throw card + " card cannot be played as it's not part of your hand";
         }
-
-        return Cards[card];
       },
       buyCard: function (card) {
         if (this.buys < 1) {
@@ -587,14 +584,16 @@ var Dominion = (function () {
         this.takeCoins(Cards[card].cost);
 
         this.discardPile.push(card);
-
-        return Cards[card];
       },
       gainCard: function (card) {
         Board.takeKingdomCard(card);
         this.hand.push(card);
-
-        return Cards[card];
+      },
+      switchToActionPhase: function (phase) {
+        this.phase = "action";
+      },
+      switchToBuyPhase: function (phase) {
+        this.phase = "buy";
       },
 
       /**
@@ -635,15 +634,16 @@ var Dominion = (function () {
     var Game = {
       context: function () {
         return {
-          kingdom:     Board.kingdom,
-          onBoard:     Board.onBoard,
-          trashPile:   Board.trashed,
-          drawPile:    Player.drawPile,
-          discardPile: Player.discardPile,
-          hand:        Player.hand,
-          actions:     Player.actions,
-          buys:        Player.buys,
-          coins:       Player.coins
+          kingdom: Board.kingdom,
+          board:   Board.onBoard,
+          trash:   Board.trashed,
+          draw:    Player.drawPile,
+          discard: Player.discardPile,
+          hand:    Player.hand,
+          actions: Player.actions,
+          buys:    Player.buys,
+          coins:   Player.coins,
+          phase:   Player.phase
         };
       },
       start: function (cardListOrPresetName) {
@@ -658,6 +658,7 @@ var Dominion = (function () {
         return pendingAction = Player.playCard(card) || null;
       },
       playMoney: function () {
+        //move to Player
         var i = 0;
         var j = Player.hand.length;
 
