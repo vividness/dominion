@@ -675,6 +675,7 @@ var Dominion = (function () {
         Player.buyCard(card);
       },
       endOfTurn: function () {
+        this.removePendingAction();
         Player.endOfTurn();
       },
       getPendingAction: function () {
