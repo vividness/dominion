@@ -140,7 +140,7 @@ var Dominion = (function () {
         type: "Action",
         cost: 3,
         play: function () {
-          this.drawcard();
+          this.drawCard();
           this.addActions(2);
         }
       },
@@ -158,7 +158,17 @@ var Dominion = (function () {
         type: "Action",
         cost: 3,
         play: function () {
-          this.gain_card_costing_up_to(4);
+          return function (card) {
+            if (!Game.getPendingAction()) {
+              throw "Invalid pending action";
+            }
+
+            if (Cards[card].cost > 4) {
+              throw card + " must not cost more than 4";
+            }
+
+            Player.gainCard(card);
+          };
         }
       },
       "Bureaucrat": {
@@ -206,7 +216,18 @@ var Dominion = (function () {
         type: "Action",
         cost: 4,
         play: function () {
-          this.trash_card_for_card_costing_more(3);
+          return function (oldCard, newCard) {
+            if (!Game.getPendingAction()) {
+              throw "Invalid pending action";
+            }
+
+            if (Cards[newCard].cost > Cards[oldCard].cost + 2) {
+              throw newCard + " does not cost up to +2 more than " + oldCard;
+            }
+
+            Player.trashCard(oldCard);
+            Player.gainCard(newCard);
+          };
         }
       },
       "Smithy": {
@@ -314,7 +335,7 @@ var Dominion = (function () {
             }
 
             if (Cards[newCard].cost > Cards[oldCard].cost + 3) {
-              throw newCard + ", cannot gain the card";
+              throw newCard + " does not cost up to +3 more than " + oldCard;
             }
 
             Player.trashCard(oldCard);
