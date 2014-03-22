@@ -558,6 +558,8 @@ var Dominion = (function () {
           if (Cards[card].play) {
             if (Cards[card].type !== "Treasure") {
               this.takeActions(1);
+            } else {
+              this.switchToBuyPhase();
             }
 
             return Cards[card].play.apply(this);
@@ -591,7 +593,7 @@ var Dominion = (function () {
         var j = this.hand.length;
 
         do {
-          if (Cards[this.hand[i]].type === 'Treasure') {
+          if (Cards[this.hand[i]].type === "Treasure") {
             this.playCard(this.hand[i]);
 
             i = 0; j = this.hand.length;
@@ -601,6 +603,8 @@ var Dominion = (function () {
 
           i++;
         } while (i < j);
+
+        this.switchToBuyPhase();
       },
       switchToWaitPhase: function (phase) {
         this.phase = "wait";
