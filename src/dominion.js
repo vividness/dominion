@@ -643,11 +643,12 @@ var Dominion = (function () {
   }());
 
   var Game = (function () {
-
     var pendingAction = null;
 
     var Game = {
       context: function () {
+        // make a copy for each of these properties 
+        // so the user cannot modify the original values
         return {
           kingdom: Board.kingdom,
           board:   Board.onBoard,
