@@ -32,7 +32,7 @@ progress
 next 
 ----
 - Action object {name: CardName, callback: function (), params: Array[]} - Find alternative to this, define an api
-- Player phases
+- Player phases; Switch phases on treasure/action card play
 - Event log queue (for the views)
 - Command line client
-- 
+- followUp() api instead of call back for interactions
