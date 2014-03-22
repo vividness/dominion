@@ -18,15 +18,7 @@ progress
 - Basic Game object with methods to interact with the internals
 - Cellar card rule implemented; Call back based interaction introduced.
 - Chapel card rule implemented;
-- Chancellor rules
-- Market rules
-- Militia
-- Mine
-- Moat
-- Remodel
-- Smithy
-- Village
-- Woodcutter
+- First game card rules
 
 
 next 
@@ -36,3 +28,4 @@ next
 - Event log queue (for the views)
 - Command line client
 - followUp() api instead of call back for interactions
+- Other cards rules
