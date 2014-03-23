@@ -549,19 +549,22 @@ var Dominion = (function () {
         }
       },
       playCard: function (card) {
-        // could be extracted to Player.holdsCard(card)
         var cardIndex = this.hand.indexOf(card);
 
         if (cardIndex !== -1) {
+          if (Cards[card].type !== "Treasure") {
+            if (this.phase === "buy") {
+              throw "Cannot play action card in buy phase";
+            }
+
+            this.takeActions(1);
+          } else if (Cards[card].type === "Treasure") {
+            this.switchToBuyPhase();
+          }
+
           this.moveCardFromHandToBoard(cardIndex);
 
           if (Cards[card].play) {
-            if (Cards[card].type !== "Treasure") {
-              this.takeActions(1);
-            } else {
-              this.switchToBuyPhase();
-            }
-
             return Cards[card].play.apply(this);
           }
         } else {
