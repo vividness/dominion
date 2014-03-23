@@ -646,7 +646,7 @@ var Dominion = (function () {
   }());
 
   var Game = (function () {
-    var pendingAction = null;
+    var interaction = null;
 
     var Game = {
       context: function () {
@@ -670,11 +670,11 @@ var Dominion = (function () {
         Player.init();
       },
       play: function (card) {
-        if (pendingAction instanceof Function) {
-          throw "Call getPendingAction() to get the callback to continue"
+        if (interaction instanceof Function) {
+          throw "Call interaction() to get a callback to continue"
         }
 
-        return pendingAction = Player.playCard(card) || null;
+        return interaction = Player.playCard(card) || null;
       },
       playMoney: function () {
         Player.playMoney();
@@ -686,11 +686,11 @@ var Dominion = (function () {
         this.removePendingAction();
         Player.endOfTurn();
       },
-      getPendingAction: function () {
-        return pendingAction;
+      interaction: function () {
+        return interaction;
       },
-      removePendingAction: function () {
-        pendingAction = null;
+      removeInteraction: function () {
+        interaction = null;
       },
       quit: function () {
       }
