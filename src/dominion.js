@@ -176,7 +176,9 @@ var Dominion = (function () {
         type: "Action - Attack",
         cost: 4,
         play: function () {
-          this.bureaucrat();
+          Player.gainCard("Silver", "drawPile");
+          // multiplayer; each other player shows a victory card
+          // or their whole hand
         }
       },
       "Feast": {
@@ -184,8 +186,19 @@ var Dominion = (function () {
         type: "Action",
         cost: 4,
         play: function () {
-          this.trash_this_card();
-          this.gain_card_costing_up_to(5);
+          this.trashCard("Feast");
+          return function (card) {
+            if (!Game.getPendingAction()) {
+              throw "Invalid pending action";
+            }
+
+            if (Cards[card].cost >= 5) {
+              throw card + " does not cost up to 5";
+            }
+
+            Player.gainCard(card);
+            Game.removePendingAction();
+          };
         }
       },
       "Gardens": {
@@ -199,7 +212,6 @@ var Dominion = (function () {
         cost: 4,
         play: function () {
           this.addCoins(2);
-          // todo
           // this.otherPlayersDiscardDownTo(3);
         }
       },
@@ -227,6 +239,8 @@ var Dominion = (function () {
 
             Player.trashCard(oldCard);
             Player.gainCard(newCard);
+
+            Game.removePendingAction();
           };
         }
       },
@@ -587,9 +601,14 @@ var Dominion = (function () {
 
         this.discardPile.push(card);
       },
-      gainCard: function (card) {
+      gainCard: function (card, destination) {
         Board.takeKingdomCard(card);
-        this.hand.push(card);
+
+        if (destination === undefined || !destination) {
+          destination = "hand";
+        }
+
+        this[destination].unshift(card);
       },
       playMoney: function () {
         var i = 0;
